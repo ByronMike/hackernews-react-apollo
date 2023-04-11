@@ -28,3 +28,6 @@ module.exports = {
   APP_SECRET,
   getUserId
 };
+
+// Path: git/Projets/hackernews-react-apollo/server/src/resolvers/Mutation.js
+const bcrypt = require('bcryptjs');
