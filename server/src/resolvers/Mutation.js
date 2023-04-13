@@ -1,27 +1,8 @@
+// A resolver is a function that determines how to retrieve or manipulate data for a specific field in a GraphQL API. In a GraphQL schema, each field has a corresponding resolver function that is responsible for returning the data for that field.
+// Note : il s'agit d'un extrait (allégé) du code
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { APP_SECRET } = require('../utils');
-
-async function post(parent, args, context, info) {
-  const { userId } = context;
-
-  let postedBy = undefined
-  if (userId) {
-    postedBy = { connect: { id: userId } }
-  }
-
-  const newLink = await context.prisma.link.create({
-    data: {
-      url: args.url,
-      description: args.description,
-      postedBy
-    }
-  });
-
-  context.pubsub.publish('NEW_LINK', newLink);
-
-  return newLink;
-}
 
 async function signup(parent, args, context, info) {
   const password = await bcrypt.hash(args.password, 10);
@@ -61,39 +42,8 @@ async function login(parent, args, context, info) {
   };
 }
 
-async function vote(parent, args, context, info) {
-  const { userId } = context;
-
-  const vote = await context.prisma.vote.findUnique({
-    where: {
-      linkId_userId: {
-        linkId: args.linkId,
-        userId: userId
-      }
-    }
-  });
-
-  if (Boolean(vote)) {
-    throw new Error(
-      `Already voted for link: ${args.linkId}`
-    );
-  }
-
-  const newVote = context.prisma.vote.create({
-    data: {
-      user: { connect: { id: userId } },
-      link: { connect: { id: args.linkId } }
-    }
-  });
-  context.pubsub.publish('NEW_VOTE', newVote);
-
-  return newVote;
-}
 
 module.exports = {
-  post,
   signup,
   login,
-  vote
 };
-

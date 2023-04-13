@@ -1,5 +1,7 @@
+# FOR FRONTEND : From the mentioned files, only the application schema defined in server/src/schema.graphql is relevant for you as a frontend developer.
 type Query {
   info: String!
+## feed query allows for filter, sorting and pagination arguments
   feed(
     filter: String
     skip: Int
@@ -8,6 +10,7 @@ type Query {
   ): Feed!
 }
 
+# Feed retrieves all links from the backend, note that this query also allows for filter, sorting and pagination arguments
 type Feed {
   id: ID!
   links: [Link!]!
@@ -16,15 +19,19 @@ type Feed {
 
 type Mutation {
   post(url: String!, description: String!): Link!
+  # signup() corresponds to a resolver
   signup(
     email: String!
     password: String!
     name: String!
   ): AuthPayload
+  # login() corresponds to a resolver
   login(email: String!, password: String!): AuthPayload
   vote(linkId: ID!): Vote
 }
 
+# newLink: Receive realtime updates when a new link is created
+# newVote: Receive realtime updates when a vote was submitted
 type Subscription {
   newLink: Link
   newVote: Vote
