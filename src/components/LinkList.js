@@ -1,6 +1,6 @@
 // 0) Import des libraires => useQuery & gql
-import React from 'react';
-import Link from './Link';
+import React from "react";
+import Link from "./Link";
 // useQuery hook is used for  fetching, caching, and error handling of data.
 /* gql is a function provided by the @apollo/client library for creating GraphQL queries, mutations, and subscriptions as plain JavaScript strings. 
 This function allows you to define your GraphQL operation as a string literal within a template literal.
@@ -12,7 +12,7 @@ This function allows you to define your GraphQL operation as a string literal wi
 2) error: In case the request fails, this field will contain information about what exactly went wrong.
 3) data: This is the actual data that was received from the server. It has the links property which represents a list of Link elements.*/
 
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, gql } from "@apollo/client";
 
 // 1) Query with Apollo/client and gql
 const FEED_QUERY = gql`
@@ -46,3 +46,5 @@ const LinkList = () => {
     </div>
   );
 };
+
+export default LinkList;

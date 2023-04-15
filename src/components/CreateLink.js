@@ -1,9 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+// 1) Import useMutation (fire the mutation) and gql
+import { useMutation, gql } from "@apollo/client";
+
+// 2) Create a mutation (post) to post description and url
+const CREATE_LINK_MUTATION = gql`
+  # PostMutation is a graphQL mutation operation to post data
+  mutation PostMutation($description: String!, $url: String!) {
+    # The mutation operation sends these arguments to a GraphQL server to create a new post object that includes the description, url, id, and createdAt fields.
+    post(description: $description, url: $url) {
+      id
+      createdAt
+      url
+      description
+    }
+  }
+`;
 
 const CreateLink = () => {
   const [formState, setFormState] = useState({
-    description: '',
-    url: ''
+    description: "",
+    url: "",
+  });
+
+  // 3) Pass the CREATE_LINK_MUTATION  as
+  //  1) first argument : the GraphQL mutation operation) to the useMutation hook and then pass the data provided by the inputs
+  //  2) the second argument : an object with various properties related to the mutation operation).
+  // Note : When we use the useMutation hook, we need to destructure out a function that can be used to call the mutation. That’s what createLink is in the code block above. We’re now free to call the function whenever we need to when the component renders.
+  // A NOTER : createLink is between [] (destructuring) to extract the first element of the array (mutation function) and assign it this variable name => createLink is a function that is extracted from an array using the destructuring syntax.
+  const [createLink] = useMutation(CREATE_LINK_MUTATION, {
+    variables: {
+      description: formState.description,
+      url: formState.url,
+    },
   });
 
   return (
@@ -11,6 +39,7 @@ const CreateLink = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          createLink();
         }}
       >
         <div className="flex flex-column mt3">
@@ -20,7 +49,7 @@ const CreateLink = () => {
             onChange={(e) =>
               setFormState({
                 ...formState,
-                description: e.target.value
+                description: e.target.value,
               })
             }
             type="text"
@@ -32,7 +61,7 @@ const CreateLink = () => {
             onChange={(e) =>
               setFormState({
                 ...formState,
-                url: e.target.value
+                url: e.target.value,
               })
             }
             type="text"

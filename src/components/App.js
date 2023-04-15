@@ -1,11 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
+import CreateLink from './CreateLink';
 import LinkList from './LinkList';
 
-// React old school
-class App extends Component {
-  render() {
-    return <LinkList />;
-  }
-}
+const App = () => {
+  return (
+  <>
+    <CreateLink />
+    <br />
+    <LinkList />
+  </>
+)}
 
 export default App;
