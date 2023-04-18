@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // 1) Import useMutation (fire the mutation) and gql
 import { useMutation, gql } from "@apollo/client";
 // 4) useNavigate Hook
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 // 2) Create a mutation (post) to post description and url
 const CREATE_LINK_MUTATION = gql`
@@ -36,8 +36,8 @@ const CreateLink = () => {
       description: formState.description,
       url: formState.url,
     },
-     // 6) Use of the onCompleted function that is provided by Apollo when mutations are performed to return on home after mutation resolved
-    onCompleted: () => navigate('/')
+    // 6) Use of the onCompleted function that is provided by Apollo when mutations are performed to return on home after mutation resolved
+    onCompleted: () => navigate("/"),
   });
 
   return (

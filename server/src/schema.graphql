@@ -8,6 +8,7 @@ type Query {
     take: Int
     orderBy: LinkOrderByInput
   ): Feed!
+  users: [User!]!
 }
 
 # Feed retrieves all links from the backend, note that this query also allows for filter, sorting and pagination arguments
