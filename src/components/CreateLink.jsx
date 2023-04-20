@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useMutation, gql } from "@apollo/client";
 // 4) useNavigate Hook
 import { useNavigate } from "react-router-dom";
+// 8) Import feed query
+import { FEED_QUERY } from './LinkList';
 
 // 2) Create a mutation (post) to post description and url
 const CREATE_LINK_MUTATION = gql`
@@ -35,6 +37,22 @@ const CreateLink = () => {
     variables: {
       description: formState.description,
       url: formState.url,
+    },
+    // 7) Add an update callback to the useMutation hook to update the Apollo store.
+    // Note : The update function works in a very similar way as before. We first read the current state of the results of the FEED_QUERY. Then we insert the newest link at beginning and write the query results back to the store. Note that we need to pass in a set of variables to the readQuery and writeQuery functions. It’s not enough to simply pass the FEED_QUERY query document in, we also need to specify the conditions of the original query we’re targeting. In this case, we pass in variables that line up with the initial variables we passed into the query in LinkList.js.
+    update: (cache, { data: { post } }) => {
+      const data = cache.readQuery({
+        query: FEED_QUERY,
+      });
+
+      cache.writeQuery({
+        query: FEED_QUERY,
+        data: {
+          feed: {
+            links: [post, ...data.feed.links]
+          }
+        },
+      });
     },
     // 6) Use of the onCompleted function that is provided by Apollo when mutations are performed to return on home after mutation resolved
     onCompleted: () => navigate("/"),

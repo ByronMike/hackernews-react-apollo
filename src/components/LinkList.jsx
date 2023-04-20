@@ -15,7 +15,8 @@ This function allows you to define your GraphQL operation as a string literal wi
 import { useQuery, gql } from "@apollo/client";
 
 // 1) Query with Apollo/client and gql
-const FEED_QUERY = gql`
+// 5) Add postedBy and votes  (+ export for futures importing in other files)
+export const FEED_QUERY = gql`
   {
     feed {
       id
@@ -24,6 +25,16 @@ const FEED_QUERY = gql`
         createdAt
         url
         description
+        postedBy {
+          id
+          name
+        }
+        votes {
+          id
+          user {
+            id
+          }
+        }
       }
     }
   }
@@ -37,9 +48,10 @@ const LinkList = () => {
   return (
     <div>
       {data && (
-        <>
-          {data.feed.links.map((link) => (
-            <Link key={link.id} link={link} />
+        <> 
+          {/* 4) Pass down an index from the LinkList component to render each Link element and its position inside the list, */}
+          {data.feed.links.map((link, index) => (
+            <Link key={link.id} link={link} index={index} />
           ))}
         </>
       )}
