@@ -16,6 +16,10 @@ import {
 } from "@apollo/client";
 // 5) We now need to wrap the App with BrowserRouter so that all child components of App will get access to the routing functionality.
 import { BrowserRouter } from 'react-router-dom';
+// 8) Import apollo subscriptions dependencies
+import { split } from '@apollo/client';
+import { WebSocketLink } from '@apollo/client/link/ws';
+import { getMainDefinition } from '@apollo/client/utilities';
 
 // 2 We create the httpLink that will connect our ApolloClient instance with the GraphQL API. The GraphQL server will be running on http://localhost:4000.
 const httpLink = createHttpLink({
