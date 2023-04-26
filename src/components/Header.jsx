@@ -17,6 +17,12 @@ const Header = () => {
         <Link to="/" className="ml1 no-underline black">
           new
         </Link>
+        {/* 4) add a new navigation item to the Header component that brings the user to the /top route */}
+        <div className="ml1">|</div>
+        <Link to="/top" className="ml1 no-underline black">
+          top
+        </Link>
+        <div className="ml1">|</div>
         <Link to="/search" className="ml1 no-underline black">
           search
         </Link>

@@ -39,11 +39,37 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+// 11) Create a new WebSocketLink that represents the WebSocket connection
+const wsLink = new WebSocketLink({
+  uri: `ws://localhost:4000/graphql`,
+  options: {
+    reconnect: true,
+    connectionParams: {
+      authToken: localStorage.getItem(AUTH_TOKEN)
+    }
+  }
+});
+
+// 11') We’ll use split for proper “routing” of the requests 
+const link = split(
+  ({ query }) => {
+    const { kind, operation } = getMainDefinition(query);
+    return (
+      kind === 'OperationDefinition' &&
+      operation === 'subscription'
+    );
+  },
+  wsLink,
+  authLink.concat(httpLink)
+);
+
 // 3 We instantiate ApolloClient by passing in the httpLink and a new instance of an InMemoryCache.
 const client = new ApolloClient({
   //link: httpLink,
   // 9) ApolloClient gets instantiated with the correct link -
-  link: authLink.concat(httpLink),
+  // link: authLink.concat(httpLink),
+  // 11) Update the constructor call of ApolloClient
+  link,
   cache: new InMemoryCache(),
 });
 
