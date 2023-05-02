@@ -7,6 +7,8 @@ import { timeDifferenceForDate } from '../utils';
 import { useMutation, gql } from '@apollo/client';
 // 11° Import feed_query
 import { FEED_QUERY } from './LinkList';
+// 12) Update the update function on the useMutation hook
+import { LINKS_PER_PAGE } from '../constants';
 
 // 4) Mutation definition
 const VOTE_MUTATION = gql`
@@ -36,6 +38,12 @@ const Link = (props) => {
   const authToken = localStorage.getItem(AUTH_TOKEN);
   // 5) useMutation hook to do the voting
   // Note : We’ll call the function that runs the mutation vote and will pass the VOTE_MUTATION GraphQL mutation to it.
+
+  // 12) Update the update function (2)
+  const take = LINKS_PER_PAGE;
+  const skip = 0;
+  const orderBy = { createdAt: 'desc' };
+
   const [vote] = useMutation(VOTE_MUTATION, {
     variables: {
       linkId: link.id
@@ -44,7 +52,13 @@ const Link = (props) => {
     update: (cache, {data: {vote}}) => {
 			// We’re calling cache.readQuery and passing in the FEED_QUERY document. This allows us to read the exact portion of the Apollo cache that we need to allow us to update it.
       const { feed } = cache.readQuery({
-        query: FEED_QUERY
+        // 13)  Update the update function (3)
+        query: FEED_QUERY,
+        variables: {
+          take,
+          skip,
+          orderBy
+        }
       });
 
 			// 9) Once we have the cache, we create a new array of data that includes the vote that was just made. The vote that was made with the mutation is destructured out using { data: { vote } }
@@ -65,6 +79,12 @@ const Link = (props) => {
           feed: {
             links: updatedLinks
           }
+        },
+        // 14) Update the update function (4)
+        variables: {
+          take,
+          skip,
+          orderBy
         }
       });
     }

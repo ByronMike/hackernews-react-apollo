@@ -17,6 +17,8 @@ import { useQuery, gql } from "@apollo/client";
 import { useLocation } from 'react-router-dom';
 // 15) Import LINKS_PER_PAGE
 import { LINKS_PER_PAGE } from '../constants';
+// 18) Import useNavigation
+import { useNavigate } from 'react-router-dom';
 
 // 1) Query with Apollo/client and gql
 // 5) Add postedBy and votes  (+ export for futures importing in other files)
@@ -144,6 +146,8 @@ const LinkList = () => {
 
   // 12) We use the useLocation hook to get the current pathname of the page being visited.
   const location = useLocation();
+  // 19) We use useNavigate hook to navigate between links
+  const navigate = useNavigate();
   const isNewPage = location.pathname.includes(
     'new'
   );
@@ -197,18 +201,69 @@ const LinkList = () => {
       document: NEW_VOTES_SUBSCRIPTION
     });
   
+    // 17) Since the setup is slightly more complicated now, we are going to calculate the list of links to be rendered in a separate method.
+    // For the /new route, we simply return all the links returned by the query. That’s logical since here we don’t have to make any manual modifications to the list that is to be rendered. If the user loaded the component from the /top route, we’ll sort the list according to the number of votes and return the top 10 links.
+    const getLinksToRender = (isNewPage, data) => {
+      if (isNewPage) {
+        return data.feed.links;
+      }
+      const rankedLinks = data.feed.links.slice();
+      rankedLinks.sort(
+        (l1, l2) => l2.votes.length - l1.votes.length
+      );
+      return rankedLinks;
+    };
 
+  // 16) Create two buttons
   return (
-    <div>
+    <>
+      {loading && <p>Loading...</p>}
+      {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
       {data && (
-        <> 
-          {/* 4) Pass down an index from the LinkList component to render each Link element and its position inside the list, */}
-          {data.feed.links.map((link, index) => (
-            <Link key={link.id} link={link} index={index} />
-          ))}
+        <>
+          {getLinksToRender(isNewPage, data).map(
+            (link, index) => (
+              <Link
+                key={link.id}
+                link={link}
+                index={index + pageIndex}
+              />
+            )
+          )}
+          {/* First button */ }
+          {/*  We start by retrieving the current page from the URL and doing a sanity check to make sure that it makes sense to paginate back or forth. We then calculate the next page and tell the router where to navigate to next. The router will then reload the component with a new page in the URL that will be used to calculate the right chunk of links to load. */}
+          {isNewPage && (
+            <div className="flex ml4 mv3 gray">
+              <div
+                className="pointer mr2"
+                onClick={() => {
+                  if (page > 1) {
+                    navigate(`/new/${page - 1}`);
+                  }
+                }}
+              >
+                Previous
+              </div>
+              {/* Second button */ }
+              <div
+                className="pointer"
+                onClick={() => {
+                  if (
+                    page <=
+                    data.feed.count / LINKS_PER_PAGE
+                  ) {
+                    const nextPage = page + 1;
+                    navigate(`/new/${nextPage}`);
+                  }
+                }}
+              >
+                Next
+              </div>
+            </div>
+          )}
         </>
       )}
-    </div>
+    </>
   );
 };
 
