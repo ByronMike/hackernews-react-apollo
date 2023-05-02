@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 // 8) Import feed query
 import { FEED_QUERY } from './LinkList';
 // 9) Update the update function of the useMutation hook 
-import { AUTH_TOKEN, LINKS_PER_PAGE } from '../constants';
+import { LINKS_PER_PAGE } from '../constants';
 
 // 2) Create a mutation (post) to post description and url
 const CREATE_LINK_MUTATION = gql`
